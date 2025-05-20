@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Transação</title>
+  <link rel="stylesheet" type="text/css" href="/css/geral.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript" src="/js/tema.js"></script>
+</head>
+<header>
+  <div class="container">
+    <div class="position-relative text-center">
+      <h1 class="mb-0">Controle Financeiro Pessoal</h1>
+      <div class="theme-selector d-flex gap-2 position-absolute end-0 top-50 translate-middle-y">
+        <div class="theme-option light" data-theme="light"></div>
+        <div class="theme-option dark" data-theme="dark-theme"></div>
+        <div class="theme-option blue" data-theme="blue-theme"></div>
+        <div class="theme-option pastel" data-theme="pastel-theme"></div>
+      </div>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/#">Transações</a></li>
+        <li><a href="/categoria">Categoria</a></li>
+        <li><a href="planejamento">Planejamento</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<body>
+<div class="container">
+  <!-- Botão centralizado -->
+  <div class="d-flex justify-content-center my-3">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#transacaoModal">
+      Nova Transação
+    </button>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="transacaoModal" tabindex="-1" aria-labelledby="transacaoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="transacaoModalLabel">Nova Transação</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="transacaoForm" action="/transacoes" method="post" th:object="${transacoes}">
+            <div class="mb-3">
+              <label for="descricao" class="form-label">Descrição:</label>
+              <input type="text" id="descricao" th:field="*{descricao}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="valor" class="form-label">Valor:</label>
+              <input type="number" id="valor" step="0.01" th:field="*{valor}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="parcelas" class="form-label">Parcelas:</label>
+              <input type="number" id="parcelas" th:field="*{parcelas}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="fixo" class="form-label">Fixo(Repete todo mês):</label>
+              <select id="fixo" th:field="*{fixo}" class="form-select" required>
+                <option value="">Selecione</option>
+                <option th:value="false" th:text="Não"></option>
+                <option th:value="true" th:text="Sim"></option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="data" class="form-label">Data:</label>
+              <input type="date" id="data" th:field="*{data}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="categoria" class="form-label">Categoria:</label>
+              <select id="categoria" th:field="*{categoria}" class="form-select" required>
+                <option value="">Selecione</option>
+                <option th:value="${categorias.nome}" th:each="categorias : ${categoriasLista}" th:text="${categorias.nome}"></option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Salvar Transação</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+    <tr>
+      <th>Data</th>
+      <th>Descrição</th>
+      <th>Valor</th>
+      <th>Categoria</th>
+      <th>Parcelas</th>
+      <th>Fixo</th>
+      <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="transacoes : ${transacoesLista}">
+      <td th:text="${transacoes.data}"></td>
+      <td th:text="${transacoes.descricao}"></td>
+      <td th:text="${transacoes.valor}"></td>
+      <td th:text="${transacoes.categoria}"></td>
+      <td th:text="${transacoes.parcelas}"></td>
+      <td th:text="${transacoes.fixo != null ? (transacoes.fixo ? 'Sim' : 'Não') : 'Não'}"></td>
+      <td>
+        <button  type="button" class="btn btn-danger" th:attr="onclick='confirmDelete(' + ${transacoes.id} + ')'"  >Deletar</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+<script>
+
+  function confirmDelete(id) {
+      if (confirm('Tem certeza que deseja deletar esta transação?')) {
+          deleteTransacoes(id);
+      }
+  }
+
+  function deleteTransacoes(id) {
+    fetch('/transacoes', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id: id }) // Enviando um objeto JSON válido
+    })
+    .then(response => {
+        if (response.ok) {
+            location.reload(true); // Recarregar a página para refletir a exclusão
+        } else {
+            alert("Erro ao deletar a Transação.");
+        }
+    })
+    .catch(error => {
+        console.error("Erro de rede:", error);
+        alert("Erro ao deletar a Transação.");
+    });
+}
+
+
+  document.getElementById('transacaoForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const valor = document.getElementById("valor").value;
+    const categoria = document.getElementById("categoria").value;
+    const parcelas = document.getElementById("parcelas").value;
+    const descricao = document.getElementById("descricao").value;
+    const data = document.getElementById("data").value;
+    const fixo = document.getElementById("fixo").value;
+    const formData = new URLSearchParams();
+    formData.append("valor", valor);
+    formData.append("data", data);
+    formData.append("fixo", fixo);
+    formData.append("categoria", categoria);
+    formData.append("parcelas", parcelas);
+    formData.append("descricao", descricao);
+
+    fetch('/transacoes', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData.toString()
+    })
+    .then(response => {
+    response.json()
+    location.reload(true);
+    })
+    .then(data => {
+        // Fechar o modal
+        var myModal = new bootstrap.Modal(document.getElementById('transacaoModal'));
+        myModal.hide();
+
+        // Recarregar a página
+        location.reload();
+    })
+    .catch(error => {
+        console.error('Erro ao criar transação:', error);
+    });
+});
+
+</script>
+</html>

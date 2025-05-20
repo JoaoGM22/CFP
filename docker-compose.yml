@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 2202joao
+      POSTGRES_DB: cfp
+    ports:
+      - "5432:5432"
+  app:
+    image: cfp
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/cfp
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 2202joao
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
