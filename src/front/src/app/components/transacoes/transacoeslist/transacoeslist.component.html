@@ -1,0 +1,70 @@
+<br>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="centralizar">Transações</h3>
+                    <div class="centralizar">
+                        <button type="button" class="btn btn-primary btn-rounded" mdbRipple (click)="new()">
+                            Novo
+                        </button>
+                    </div>
+                    <br>
+                    <table border="1" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Descrição</th>
+                                <th>Valor</th>
+                                <th>Parcelas</th>
+                                <th>Fixo</th>
+                                <th>Categoria</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (transacao of lista; track $index) {
+                            <tr>
+                                   <td>{{transacao.data}}</td>
+                                   <td>{{transacao.descricao}}</td>
+                                   <td>{{transacao.valor}}</td>
+                                   <td>{{transacao.parcelas}}</td>
+                                   <td>{{ transacao.fixo ? 'Sim' : 'Não' }}</td>
+                                   <td>{{transacao.categoria}}</td>
+                                   <td>
+                                    <button type="button" class="btn btn-primary btn-rounded" mdbRipple (click)="edit(transacao)">
+                                        Editar
+                                    </button>
+
+                                    <button type="button" class="btn btn-danger btn-rounded" mdbRipple (click)="deleteByid(transacao)">
+                                    Excluir
+                                    </button>
+                                   </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #modalTransacaoDetalhe>
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Nova Transação</h5>
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Close"
+          (click)="modalRef.close()"
+        ></button>
+      </div>
+      <div class="modal-body">
+
+        <app-transacoesdetails [transacao]="transacaoEdit" (retorno)="retornoDetalhe($event)"></app-transacoesdetails>
+        
+      </div>
+      
+</ng-template>

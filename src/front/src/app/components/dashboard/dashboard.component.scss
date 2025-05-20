@@ -1,0 +1,106 @@
+/* home.component.scss */
+.dashboard-container {
+    padding: 20px;
+  
+    .loading, .error-message {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+    }
+  
+    .dashboard-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+  
+      .header-section {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+  
+        h1 {
+          margin: 0;
+          font-size: 24px;
+        }
+  
+        .current-date {
+          font-size: 16px;
+          color: #666;
+        }
+      }
+  
+      .balance-section {
+        grid-column: 1 / -1;
+  
+        h2 {
+          font-size: 32px;
+          margin: 10px 0;
+        }
+      }
+  
+      .monthly-summary, .recent-transactions, .upcoming-bills, .expense-chart {
+        min-height: 200px;
+      }
+  
+      .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 16px;
+  
+        &.total {
+          font-weight: bold;
+          border-top: 1px solid #eee;
+          padding-top: 10px;
+          margin-top: 10px;
+        }
+      }
+  
+      .transaction-amount, .bill-amount {
+        font-weight: bold;
+      }
+  
+      .view-all {
+        text-align: right;
+        margin-top: 10px;
+  
+        a {
+          color: #3f51b5;
+          text-decoration: none;
+  
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+  
+      .no-bills, .no-data {
+        text-align: center;
+        color: #666;
+        padding: 20px 0;
+      }
+    }
+  
+    .positive {
+      color: #4caf50;
+    }
+  
+    .negative {
+      color: #f44336;
+    }
+  
+    mat-card {
+      height: 100%;
+    }
+  
+    // Responsividade para telas menores
+    @media (max-width: 768px) {
+      .dashboard-content {
+        grid-template-columns: 1fr;
+      }
+    }
+  }

@@ -1,0 +1,105 @@
+<!-- home.component.html -->
+<div class="dashboard-container">
+  <div *ngIf="loading" class="loading">
+    <mat-spinner></mat-spinner>
+    <p>Carregando dados...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <p>Ocorreu um erro ao carregar os dados. Por favor, tente novamente mais tarde.</p>
+    <button mat-raised-button color="primary" (click)="loadDashboardData()">Tentar novamente</button>
+  </div>
+
+  <div *ngIf="!loading && !error" class="dashboard-content">
+    <!-- Cabeçalho com saudação e data -->
+    <div class="header-section">
+      <h1>Olá, {{dashboardData.usuario.nome}}!</h1>
+      <p class="current-date">{{today | date: 'fullDate'}}</p>
+    </div>
+
+    <!-- Seção de Saldo -->
+    <div class="balance-section">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Saldo Atual</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <h2 [ngClass]="{'positive': dashboardData.saldo >= 0, 'negative': dashboardData.saldo < 0}">
+            {{dashboardData.saldo | currency:'BRL'}}
+          </h2>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Resumo Mensal -->
+    <div class="monthly-summary">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Resumo do Mês</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="summary-item">
+            <span>Receitas:</span>
+            <span class="positive">{{dashboardData.rendaMensal | currency:'BRL'}}</span>
+          </div>
+          <div class="summary-item">
+            <span>Despesas:</span>
+            <span class="negative">{{dashboardData.despesaMensal | currency:'BRL'}}</span>
+          </div>
+          <div class="summary-item total">
+            <span>Saldo:</span>
+            <span [ngClass]="{'positive': dashboardData.rendaMensal - dashboardData.despesaMensal >= 0, 'negative': dashboardData.rendaMensal - dashboardData.despesaMensal < 0}">
+              {{dashboardData.rendaMensal - dashboardData.despesaMensal | currency:'BRL'}}
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Transações Recentes -->
+    <div class="recent-transactions">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Transações Recentes</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-list>
+            <mat-list-item *ngFor="let transacao of dashboardData.transacoesRecentes">
+              <div mat-line class="transaction-title">{{transacao.descricao}}</div>
+              <div mat-line class="transaction-date">{{transacao.data | date: 'dd/MM/yyyy'}}</div>
+              <span class="transaction-amount" [ngClass]="{'positive': transacao.valor > 0, 'negative': transacao.valor < 0}">
+                {{transacao.valor | currency:'BRL'}}
+              </span>
+            </mat-list-item>
+          </mat-list>
+          <div class="view-all">
+            <a routerLink="/admin/transacoes">Ver todas as transações</a>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Contas -->
+    <div class="accounts">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Minhas Contas</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-list>
+            <mat-list-item *ngFor="let conta of dashboardData.contas">
+              <div mat-line class="account-name">{{conta.descricao}}</div>
+              <div mat-line class="account-type">{{conta.data}}</div>
+              <span class="account-balance" [ngClass]="{'positive': conta.valor >= 0, 'negative': conta.valor < 0}">
+                {{conta.valor | currency:'BRL'}}
+              </span>
+            </mat-list-item>
+          </mat-list>
+          <div class="view-all">
+            <a routerLink="/contas">Gerenciar Contas</a>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
